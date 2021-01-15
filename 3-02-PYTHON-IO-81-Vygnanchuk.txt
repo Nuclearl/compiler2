@@ -1,6 +1,0 @@
-def main():
-    number = 4
-    r = number*5
-    return r
-
-main()
