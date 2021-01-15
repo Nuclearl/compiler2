@@ -5,7 +5,7 @@ import ast, astpretty, sys
 sys.tracebacklimit = 0
 
 
-title = "3-02-PYTHON-IO-81-Vygnanchuk"
+title = "input"
 lexer = CalcLexer()
 parser = CalcParser()
 with open(f"{title}.txt", encoding="utf-8") as f:
