@@ -56,11 +56,6 @@ class Location(AST):
     pass
 
 
-# Concrete AST nodes
-class PrintStatement(Statement):
-    value: Expression
-
-
 class IntegerLiteral(Literal):
     value: int
 
@@ -71,17 +66,6 @@ class StringLiteral(Literal):
 
 class BoolLiteral(Literal):
     value: str
-
-
-class IfStatement(Statement):
-    condition: Expression
-    true_block: [Statement]
-    false_block: [Statement]
-
-
-class WhileStatement(Statement):
-    condition: Expression
-    body: [Statement]
 
 
 class BinOp(Expression):
@@ -100,10 +84,6 @@ class FuncCall(Expression):
     arguments: [Expression]
 
 
-class ConstDeclaration(Statement):
-    name: str
-    value: Expression
-
 
 class FuncParameter(AST):
     name: str
@@ -117,10 +97,6 @@ class FuncDeclaration(Statement):
 
 class ReturnStatement(Statement):
     value: Expression
-
-
-class SimpleType(DataType):
-    name: str
 
 
 class VarDeclaration(Statement):

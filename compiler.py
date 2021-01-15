@@ -10,7 +10,7 @@ class CalcParser(Parser):
         ('left', 'AND', 'NOT'),
         ('nonassoc', 'LT', 'LE', 'GT', 'GE', 'EQ', 'NE'),
         ('left', 'PLUS', 'MINUS'),
-        ('left', 'TIMES', 'DIVIDE'),
+        ('left', 'MULTIPLICATION', 'DIVIDE'),
         ('right', 'UNARY')
     )
 
@@ -31,10 +31,6 @@ class CalcParser(Parser):
         p.statements.append(p.statement)
         return p.statements
 
-    @_('print_statement')
-    def statement(self, p):
-        return p.print_statement
-
     @_('var_declaration')
     def statement(self, p):
         return p.var_declaration
@@ -42,14 +38,6 @@ class CalcParser(Parser):
     @_('assign_statement')
     def statement(self, p):
         return p.assign_statement
-
-    @_('if_statement')
-    def statement(self, p):
-        return p.if_statement
-
-    @_('while_statement')
-    def statement(self, p):
-        return p.while_statement
 
     @_('func_declaration')
     def statement(self, p):
@@ -105,22 +93,6 @@ class CalcParser(Parser):
     def argument(self, p):
         return p.expression
 
-    @_('IF expression "{" block "}" ELSE "{" block "}"')
-    def if_statement(self, p):
-        return IfStatement(p.expression, p[3], p[7], lineno=p.lineno)
-
-    @_('IF expression "{" block "}"')
-    def if_statement(self, p):
-        return IfStatement(p.expression, p[3], [], lineno=p.lineno)
-
-    @_('WHILE expression "{" block "}"')
-    def while_statement(self, p):
-        return WhileStatement(p.expression, p.block, lineno=p.lineno)
-
-    @_('PRINT expression')
-    def print_statement(self, p):
-        return PrintStatement(p.expression, lineno=p.lineno)
-
     @_('ID ASSIGN expression')
     def var_declaration(self, p):
         return VarDeclaration(p[0], p.expression, lineno=p.lineno)
@@ -129,20 +101,23 @@ class CalcParser(Parser):
     def assign_statement(self, p):
         return WriteLocation(p.location, p.expression, lineno=p.lineno)
 
-    @_('expression PLUS expression',
-       'expression MINUS expression',
-       'expression TIMES expression',
+    @_('expression MINUS expression',
+       'expression MULTIPLICATION expression',
        'expression DIVIDE expression',
+       'expression OR expression')
+    def expression(self, p):
+        return BinOp(p[1], p.expression0, p.expression1, lineno=p.lineno)
+
+    @_('expression PLUS expression',
        'expression LT expression',
        'expression LE expression',
        'expression GT expression',
        'expression GE expression',
        'expression EQ expression',
        'expression NE expression',
-       'expression AND expression',
-       'expression OR expression')
+       'expression AND expression')
     def expression(self, p):
-        return BinOp(p[1], p.expression0, p.expression1, lineno=p.lineno)
+        raise SyntaxError(f'Unexpected symbol at {p.lineno+1} line')
 
     @_('PLUS expression',
        'MINUS expression',
@@ -174,9 +149,9 @@ class CalcParser(Parser):
     def literal(self, p):
         return StringLiteral(p.STRING, lineno=p.lineno)
 
-    @_('FLOAT', 'BOOLEAN')
+    @_('FLOAT', 'BOOLEAN', 'HEX', 'BIN', 'OCT')
     def literal(self, p):
-        raise SyntaxError(f'Unexpected symbol at {p.lineno} line')
+        raise SyntaxError(f'Unexpected symbol at {p.lineno+1} line')
 
     @_('ID')
     def location(self, p):

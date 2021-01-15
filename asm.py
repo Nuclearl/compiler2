@@ -13,7 +13,7 @@ class AssemblerGenerator:
                 self.table_register[func_name][name] = list(self.table_register[func_name].values())[-1] + 4
             else:
                 self.table_register[func_name][name] = 0
-        self.txt += "mov {0}, {1}\n".format(self.get_register(func_name, name), value)
+            self.txt += "mov {0}, {1}\n".format(self.get_register(func_name, name), value)
 
     def get_register(self, func_name, name):
         if name != "return":
@@ -98,6 +98,34 @@ class AssemblerGenerator:
             return object.value
         elif self.__get_class_name(object) == "ReadLocation":
             return f"{self.get_register(func_name, object.location.name)}"
+
+    def generate_cpp(self):
+        cpp_code = f"""
+#include <iostream>
+#include <string>
+#include <stdint.h>
+using namespace std;
+string r = "";
+
+string toBinary(int n)
+{{   
+    r = (n % 2 == 0 ? "0" : "1") + r;
+    if (n / 2 != 0) {{
+        toBinary(n / 2);
+    }}
+    return r;
+}}
+int main()
+{{
+int b;
+__asm {{
+    {self.txt}
+}}
+cout << "DEC: " << b << endl;
+cout << "BIN: " << toBinary(b) << endl;
+}}
+"""
+        return cpp_code
 
     def __get_class_name(self, object):
         return object.__class__.__name__

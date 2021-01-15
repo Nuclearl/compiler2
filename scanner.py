@@ -9,13 +9,15 @@ class CalcLexer(Lexer):
     }
 
     tokens = {
-        'PRINT', 'ELSE', 'DEF', 'IF', 'RETURN', 'WHILE',
+        'DEF', 'RETURN',
         'ID',
-        'INTEGER', 'FLOAT', 'BOOLEAN', 'STRING', 'COMA',
-        'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'ASSIGN', 'COLON',
+        'INTEGER', 'FLOAT', 'BOOLEAN', 'STRING', 'HEX', 'OCT', 'BIN', 'COMA',
+        'PLUS', 'MINUS', 'MULTIPLICATION', 'DIVIDE', 'ASSIGN', 'COLON',
         'LE', 'LT', 'GE', 'GT', 'EQ', 'NE', 'AND', 'OR', 'NOT',
         'TAB', "NL"
     }
+
+
 
     LE = r'<='
     LT = r'<'
@@ -23,34 +25,34 @@ class CalcLexer(Lexer):
     GT = r'>'
     EQ = r'=='
     NE = r'!='
-    AND = r'&&'
+    AND = r'&&|and'
     OR = r'\|\||or'
     NOT = r'!'
     TAB = '    '
     NL = '\n'
     PLUS = r'\+'
     MINUS = r'-'
-    TIMES = r'\*'
+    MULTIPLICATION = r'\*'
     DIVIDE = r'/'
     ASSIGN = r'='
     COLON = r':'
     COMA = r','
 
+    HEX = r'0x\d+'
+    OCT = r'0o\d+'
+    BIN = r'0b\d+'
     FLOAT = r'(((\d+\.\d*)|(\.\d+))([eE][+-]?\d+)?)|(\d+[eE][+-]?\d+)'
     INTEGER = r'(0x[0-9ABCDEF]+)|(0b[01]+)|(0o[0-5]+)|\d+'
 
     BOOLEAN = r'(true)|(false)'
+
     STRING = r'(\".*\")|(\'.*\')'
 
     @_(r'[a-zA-Z_][a-zA-Z0-9_]*')
     def ID(self, t):
         keywords = {
-            'else',
             'def',
-            'if',
-            'print',
             'return',
-            'while'
         }
         if t.value in keywords:
             t.type = t.value.upper()
